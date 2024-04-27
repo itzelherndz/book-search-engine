@@ -1,3 +1,4 @@
+const { GraphQLError } = require ('graphql');
 const jwt = require('jsonwebtoken');
 
 // set token secret and expiration date
@@ -10,13 +11,20 @@ module.exports = {
     // allows token to be sent via  req.query or headers
     let token = req.query.token || req.headers.authorization;
 
+    // authentication error from graphql
+    const AuthenticationError = new GraphQLError('Could not authenticate user.', {
+      extensions: {
+        code: 'UNAUTHENTICATED',
+      },
+    });
+
     // ["Bearer", "<tokenvalue>"]
     if (req.headers.authorization) {
       token = token.split(' ').pop().trim();
     }
 
     if (!token) {
-      return res.status(400).json({ message: 'You have no token!' });
+      return next(AuthenticationError);
     }
 
     // verify token and get user data out of it
@@ -25,7 +33,7 @@ module.exports = {
       req.user = data;
     } catch {
       console.log('Invalid token');
-      return res.status(400).json({ message: 'invalid token!' });
+      return next(AuthenticationError);
     }
 
     // send to next endpoint
