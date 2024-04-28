@@ -37,7 +37,7 @@ const typeDefs = `
             link: String!
             title: String!
         ): Book
-        deleteBook(userId: ID!, bookId: ID!): User
+        removeBook(userId: ID!, bookId: ID!): User
     }
 `;
 
