@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMutation } from 'react';
 import {
   Container,
   Card,
@@ -7,40 +7,35 @@ import {
   Col
 } from 'react-bootstrap';
 
-import { getMe, deleteBook } from '../utils/API';
+import { GET_ME } from '../utils/queries';
+import { REMOVE_BOOK } from '../utils/mutations';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
+  const { loading, error, data } = useQuery(GET_ME);
+  const [removeBook] = useMutation(REMOVE_BOOK);
 
-  // use this to determine if `useEffect()` hook needs to run again
-  const userDataLength = Object.keys(userData).length;
-
-  useEffect(() => {
+  useEffect( () => {
     const getUserData = async () => {
       try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
-
+        const token = Auth.loggedIn() ? Auth.getToken():null;
         if (!token) {
           return false;
         }
 
-        const response = await getMe(token);
-
-        if (!response.ok) {
-          throw new Error('something went wrong!');
+        if(data) {
+          setUserData(data.user);
         }
-
-        const user = await response.json();
-        setUserData(user);
       } catch (err) {
-        console.error(err);
+        console.log(err);
       }
     };
-
     getUserData();
-  }, [userDataLength]);
+  },[data]);
+
+  
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -51,13 +46,16 @@ const SavedBooks = () => {
     }
 
     try {
-      const response = await deleteBook(bookId, token);
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
+      const response = await removeBook({
+        variables:{bookId}
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
       }
 
-      const updatedUser = await response.json();
+      const updatedUser = await response.data.user;
       setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
@@ -67,7 +65,7 @@ const SavedBooks = () => {
   };
 
   // if data isn't here yet, say so
-  if (!userDataLength) {
+  if (loading) {
     return <h2>LOADING...</h2>;
   }
 
