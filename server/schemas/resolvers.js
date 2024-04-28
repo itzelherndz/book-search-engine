@@ -36,8 +36,8 @@ const resolvers = {
                 { new: true, runValidators: true }
               );
         },
-        // finds user and deletes saved book given parameters of the bookId
-        deleteBook: async (parent, {user, params}) => {
+        // finds user and removes saved book given parameters of the bookId
+        removeBook: async (parent, {user, params}) => {
             return User.findOneAndUpdate(
                 { _id: user._id },
                 { $pull: { savedBooks: { bookId: params.bookId } } },
