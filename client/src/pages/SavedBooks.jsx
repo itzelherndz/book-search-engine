@@ -1,4 +1,5 @@
-import { useState, useEffect, useMutation } from 'react';
+import { useState, useEffect  } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Container,
   Card,
@@ -14,7 +15,9 @@ import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
-  const { loading, error, data } = useQuery(GET_ME);
+  const { loading, error, data } = useQuery(GET_ME, {
+    variables: Auth.getProfile().user.username
+  });
   const [removeBook] = useMutation(REMOVE_BOOK);
 
   useEffect( () => {
@@ -24,7 +27,7 @@ const SavedBooks = () => {
         if (!token) {
           return false;
         }
-
+        console.log(data);
         if(data) {
           setUserData(data.user);
         }

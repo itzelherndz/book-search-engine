@@ -14,9 +14,9 @@ const AuthenticationError = new GraphQLError('Could not authenticate user.', {
 module.exports = {
   AuthenticationError,
   // function for our authenticated routes
-  authMiddleware: function (req, res, next) {
+  authMiddleware: function ({req}) {
     // allows token to be sent via  req.query or headers
-    let token = req.query.token || req.headers.authorization;
+    let token = req.query.token || req.headers.authorization || req.body.token;
 
     // ["Bearer", "<tokenvalue>"]
     if (req.headers.authorization) {
@@ -24,7 +24,7 @@ module.exports = {
     }
 
     if (!token) {
-      return next(AuthenticationError);
+      return req;
     }
 
     // verify token and get user data out of it
@@ -33,11 +33,12 @@ module.exports = {
       req.user = data;
     } catch {
       console.log('Invalid token');
-      return next(AuthenticationError);
+      // return next(AuthenticationError);
     }
 
     // send to next endpoint
-    next();
+    // next();
+    return req;
   },
   signToken: function ({ username, email, _id }) {
     const payload = { username, email, _id };
