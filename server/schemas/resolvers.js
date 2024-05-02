@@ -29,12 +29,13 @@ const resolvers = {
             return { user, token };
         },
         // finds a user and updates it with the body that includes the book information
-        saveBook: async (parent, {user, body}) => {
+        saveBook: async (parent, {userId, authors, description, bookId, image, title}) => {
+            const body = {authors, description, bookId, image, link, title};
             return User.findOneAndUpdate(
-                { _id: user._id },
+                { _id: userId },
                 { $addToSet: { savedBooks: body } },
                 { new: true, runValidators: true }
-              );
+              ); 
         },
         // finds user and removes saved book given parameters of the bookId
         removeBook: async (parent, {user, params}) => {

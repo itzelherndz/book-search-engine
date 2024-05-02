@@ -30,13 +30,13 @@ const typeDefs = `
         login(email: String!, password: String!): Auth
         saveBook(
             userId: ID!,
-            authors: [String]!,
-            description: String!,
+            authors: [String],
+            description: String,
             bookId: String!,
-            image: String!
-            link: String!
+            image: String
+            link: String
             title: String!
-        ): Book
+        ): User
         removeBook(userId: ID!, bookId: ID!): User
     }
 `;
