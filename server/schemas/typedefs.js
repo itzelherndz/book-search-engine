@@ -22,7 +22,7 @@ const typeDefs = `
     }
 
     type Query {
-        user(_id: String!): User
+        user(_id: ID!): User
     }
 
     type Mutation {
@@ -33,8 +33,8 @@ const typeDefs = `
             authors: [String],
             description: String,
             bookId: String!,
-            image: String
-            link: String
+            image: String,
+            link: String,
             title: String!
         ): User
         removeBook(userId: ID!, bookId: ID!): User
