@@ -4,8 +4,8 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 const resolvers = {
     Query: {
         // query to find one user based on username and populate savedBooks
-        user: async (parent, {username}) => {
-            return User.findOne({username}).populate('savedBooks');
+        user: async (parent, {userId}) => {
+            return User.findOne({userId}).populate('savedBooks');
         },
     },
     Mutation: {
@@ -30,7 +30,7 @@ const resolvers = {
         },
         // finds a user and updates it with the body that includes the book information
         saveBook: async (parent, {userId, authors, description, bookId, image, title}) => {
-            const body = {authors, description, bookId, image, link, title};
+            const body = {authors, description, bookId, image, title};
             return User.findOneAndUpdate(
                 { _id: userId },
                 { $addToSet: { savedBooks: body } },
