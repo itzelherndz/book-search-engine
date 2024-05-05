@@ -4,8 +4,8 @@ const { signToken, AuthenticationError } = require('../utils/auth');
 const resolvers = {
     Query: {
         // query to find one user based on username and populate savedBooks
-        user: async (parent, {userId}) => {
-            return User.findOne({userId}).populate('savedBooks');
+        user: async (parent, {_id}) => {
+            return User.findOne({_id: _id}).populate('savedBooks');
         },
     },
     Mutation: {
@@ -38,10 +38,10 @@ const resolvers = {
               ); 
         },
         // finds user and removes saved book given parameters of the bookId
-        removeBook: async (parent, {user, params}) => {
+        removeBook: async (parent, {user, bookId}) => {
             return User.findOneAndUpdate(
                 { _id: user._id },
-                { $pull: { savedBooks: { bookId: params.bookId } } },
+                { $pull: { savedBooks: { bookId: bookId } } },
                 { new: true }
               );
         }

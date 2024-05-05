@@ -16,7 +16,7 @@ import { removeBookId } from '../utils/localStorage';
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
   const { loading, error, data } = useQuery(GET_ME, {
-    variables: Auth.getProfile().user.username
+    variables: {_id: Auth.getProfile().data._id }
   });
   const [removeBook] = useMutation(REMOVE_BOOK);
 
@@ -35,8 +35,8 @@ const SavedBooks = () => {
         console.log(err);
       }
     };
-    getUserData();
-  },[data]);
+    return () => getUserData();
+  },[]);
 
   
 
