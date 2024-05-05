@@ -38,9 +38,9 @@ const resolvers = {
               ); 
         },
         // finds user and removes saved book given parameters of the bookId
-        removeBook: async (parent, {user, bookId}) => {
+        removeBook: async (parent, {userId, bookId}) => {
             return User.findOneAndUpdate(
-                { _id: user._id },
+                { _id: userId},
                 { $pull: { savedBooks: { bookId: bookId } } },
                 { new: true }
               );

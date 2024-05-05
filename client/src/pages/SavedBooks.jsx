@@ -20,17 +20,10 @@ const SavedBooks = () => {
   let userData = data?.user || {};
   const [removeBook] = useMutation(REMOVE_BOOK);
 
-  // Fetch data initially
+  // Continously refetch data
   useEffect(() => {
     refetch();
-  }, []);
-
-  // Watch for changes in userData and refetch data
-  useEffect(() => {
-    if (userData) {
-      refetch();
-    }
-  }, [userData, refetch]);
+  });
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -43,7 +36,9 @@ const SavedBooks = () => {
     try {
 
       const response = await removeBook({
-        variables:{bookId}
+        variables:{
+          bookId, 
+          userId: data.user._id}
       });
 
       const updatedUser = await response.data.user;
