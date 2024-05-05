@@ -14,11 +14,23 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  const { loading, error, data } = useQuery(GET_ME, {
+  const { loading, error, data, refetch } = useQuery(GET_ME, {
     variables: {_id: Auth.getProfile().data._id }
   });
   let userData = data?.user || {};
   const [removeBook] = useMutation(REMOVE_BOOK);
+
+  // Fetch data initially
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  // Watch for changes in userData and refetch data
+  useEffect(() => {
+    if (userData) {
+      refetch();
+    }
+  }, [userData, refetch]);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
