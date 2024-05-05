@@ -5,7 +5,7 @@ const resolvers = {
     Query: {
         // query to find one user based on username and populate savedBooks
         user: async (parent, {_id}) => {
-            return User.findOne({_id: _id}).populate('savedBooks');
+            return User.findById(_id).populate('savedBooks');
         },
     },
     Mutation: {

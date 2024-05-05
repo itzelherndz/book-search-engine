@@ -20,25 +20,24 @@ const SavedBooks = () => {
   });
   const [removeBook] = useMutation(REMOVE_BOOK);
 
-  useEffect( () => {
+  useEffect(() => {
     const getUserData = async () => {
       try {
-        const token = Auth.loggedIn() ? Auth.getToken():null;
-        if (!token) {
-          return false;
+          const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+          if (!token) {
+            return false;
         }
-        console.log(data);
-        if(data) {
-          setUserData(data.user);
-        }
+        const user = data.user;
+        setUserData(user);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     };
-    return () => getUserData();
-  },[]);
 
-  
+    getUserData();
+  }, [loading]);
+   
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -54,9 +53,9 @@ const SavedBooks = () => {
         variables:{bookId}
       });
 
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
+      // if (error) {
+      //   throw new Error(error.message);
+      // }
 
       const updatedUser = await response.data.user;
       setUserData(updatedUser);
